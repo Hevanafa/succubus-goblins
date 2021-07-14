@@ -1,5 +1,10 @@
 import React from "react";
+
+import { attemptLoadScore, saveBestScore } from "./modules/scores";
+import { playSound, loadSoundFiles } from "./modules/sounds";
+
 import "./App.scss";
+import { aboutAppFragment, bestScoreFragment, guideFragment, heroFragment, livesFragment, mapFragment, scoreFragment, symbolListFragment } from "./modules/fragments";
 
 // Taken from:
 // https://lodash.com/docs/4.17.15#random
@@ -88,58 +93,15 @@ export default class App extends React.Component<{}, IState> {
 		});
 	}
 
-	attemptLoadScore() {
-		let bestScore = localStorage.getItem("best_score");
-
-		if (bestScore)
-			this.setState({
-				bestScore: Number(bestScore)
-			});
-	}
-
-	saveBestScore() {
-		const { score, bestScore } = this.state;
-
-		if (score > bestScore) {
-			localStorage.setItem("best_score", score + "");
-			this.setState({
-				bestScore: score
-			});
-		}
-	}
-
-	readonly soundFiles = [
-		"miss",
-		"slash1",
-		"slash2",
-		"slash3"
-	];
+	// scores.ts
+	attemptLoadScore = attemptLoadScore;
+	saveBestScore = saveBestScore;
 
 	loadedSoundFiles: Map<string, HTMLAudioElement> | null = null;
 
-	playSound(key: string) {
-		const soundFile = this.loadedSoundFiles?.get(key);
-
-		if (!soundFile)
-			throw new Error("Can't find " + key + "!");
-
-		soundFile.volume = 0.2;
-		soundFile.play();
-	}
-
-	loadSoundFiles() {
-		// Skip loading if it's already loaded
-		if (this.loadedSoundFiles)
-			return;
-
-		this.loadedSoundFiles = new Map<string, HTMLAudioElement>();
-
-		for (const name of this.soundFiles)
-			this.loadedSoundFiles.set(
-				name,
-				new Audio(`./assets/ogg/${name}.ogg`)
-			);
-	}
+	// sounds.ts
+	playSound = playSound;
+	loadSoundFiles = loadSoundFiles;
 
 	readonly restartMessage = "You ran out of lives!  Press R to restart.";
 
@@ -217,145 +179,30 @@ export default class App extends React.Component<{}, IState> {
 			)
 	}
 
-	get bestScoreLine() {
-		return <>
-			<br />
-			Best: {this.state.bestScore}
-		</>;
-	}
-
-	get guideFragment() {
-		return this.state.score <= 100
-			?
-			<div className="guide">
-				123
-			</div> : <div className="guide">
-				···
-			</div>;
-	}
+	// fragments.tsx
+	aboutAppFragment = aboutAppFragment;
+	bestScoreFragment = bestScoreFragment;
+	guideFragment = guideFragment;
+	heroFragment = heroFragment;
+	livesFragment = livesFragment;
+	mapFragment = mapFragment;
+	scoreFragment = scoreFragment;
+	symbolListFragment = symbolListFragment;
 
 	render() {
-		const {
-			lives,
-			score,
-			soilAry,
-
-			deadBodyAry,
-			floorBlood
-		} = this.state;
-
 		if (!this.state.initialised)
 			return null;
 
 		return (
 			<div className="App">
-				<div className="lives">
-					<span className="heart">♥ </span>
-					<span>
-						{lives}
-					</span>
-				</div>
-
-				<div className="score">
-					Score: {score}
-					{this.bestScoreLine}
-				</div>
-
-				{this.guideFragment}
-
-				<div className="terrain">
-					{
-						this.goblinMap
-							.map((row, rowIdx) => {
-								const [
-									isSecondLastIdx,
-									isLastIdx
-								] = [
-									rowIdx === this.goblinMap.length - 2,
-									rowIdx === this.goblinMap.length - 1
-								];
-
-								return (
-									<div key={`gm_${rowIdx}`}>
-										{
-											isLastIdx && deadBodyAry[0]
-												? <span className="dead goblin">g</span>
-												: "\u00a0"
-										}
-										{
-											row.map((cell, cellIdx) => {
-												const isBloody = (isSecondLastIdx || isLastIdx)
-													&& floorBlood[cellIdx];
-
-												return (
-													cell
-													? <span
-														key={`gm_${rowIdx}_${cellIdx}`}
-														className={
-															(isBloody ? "bloody " : "") +
-															"goblin"
-														}>
-														g
-													</span> : <span
-														key={`gm_${rowIdx}_${cellIdx}`}
-														className={
-															(isBloody ? "bloody " : "") +
-															"soil"
-														}>
-														{soilAry[rowIdx][cellIdx]}
-													</span>
-												);
-												}
-											) // "\u00a0"
-										}
-										{
-											isLastIdx && this.state.deadBodyAry[1]
-												? <span className="dead goblin">g</span>
-												: "\u00a0"
-										}
-									</div>
-								);
-							})
-					}
-				</div>
-
-				{this.guideFragment}
-
-				<div className="hero">
-					<span>s</span>
-					<span className="bonker">!</span>
-				</div>
-
-				<div className="symbol-list">
-					<div>
-						How to play:<br />
-						Use the keys 1, 2 or 3 to bonk the goblins.<br />
-						Their h*rny minds must be stopped!
-					</div>
-
-					<div>
-						<br />
-						Symbols:
-					</div>
-
-					<div>
-						<span className="succubus">s</span>
-						<span>: Succubus</span>
-					</div>
-					<div>
-						<span className="bonker">!</span>
-						<span>: Two-handed silver spiked club</span>
-					</div>
-					<div>
-						<span className="goblin">g</span>
-						<span>: Goblin</span>
-					</div>
-				</div>
-
-				<div className="about-app">
-					Made with <span className="heart">♥</span> by Hevanafa<br />
-					Last update: 14 July 2021
-				</div>
+				{this.livesFragment()}
+				{this.scoreFragment()}
+				{this.guideFragment()}
+				{this.mapFragment()}
+				{this.guideFragment()}
+				{this.heroFragment()}
+				{this.symbolListFragment()}
+				{this.aboutAppFragment()}
 			</div>
 		);
 	}
