@@ -5,10 +5,8 @@ import { playSound, loadSoundFiles } from "./modules/sounds";
 
 import "./App.scss";
 import { aboutAppFragment, bestScoreFragment, guideFragment, heroFragment, livesFragment, mapFragment, scoreFragment, symbolListFragment } from "./modules/fragments";
-
-// Taken from:
-// https://lodash.com/docs/4.17.15#random
-const random = require("lodash.random") as (lower?: number, upper?: number, floating?: boolean) => number;
+import { attemptHit, checkGameOver, commitHit, missHit } from "./modules/combatMethods";
+import random from "./modules/random";
 
 interface IState {
 	initialised: boolean;
@@ -27,6 +25,9 @@ interface IState {
 
 export default class App extends React.Component<{}, IState> {
 	readonly goblinAryCap = 50;
+	readonly restartMessage = "You ran out of lives!  Press R to restart.";
+
+	protected loadedSoundFiles: Map<string, HTMLAudioElement> | null = null;
 
 	constructor(props?: any) {
 		super(props);
@@ -39,7 +40,7 @@ export default class App extends React.Component<{}, IState> {
 			goblinPosAry: [],
 			lives: 0,
 
-			soilAry: this.getSoilMap(),
+			soilAry: this.newSoilMap(),
 			deadBodyAry: [],
 			floorBlood: []
 		};
@@ -66,7 +67,16 @@ export default class App extends React.Component<{}, IState> {
 		});
 	}
 
-	getSoilMap = () =>
+	get goblinMap() {
+		return this.state.goblinPosAry
+			.slice(-10)
+			.map(cell =>
+				[...new Array(3)]
+					.map((_, idx) => cell === idx)
+			)
+	}
+
+	newSoilMap = () =>
 		[...new Array(10)]
 			.map(_ =>
 				[...new Array(3)].map(
@@ -74,13 +84,13 @@ export default class App extends React.Component<{}, IState> {
 				)
 			);
 
-	getStartingGoblins = () =>
+	protected getStartingGoblins = () =>
 		[...new Array(this.goblinAryCap)]
 			.map(_ =>
 				random(0, 2)
 			);
 
-	startNewGame() {
+	private startNewGame() {
 		this.setState({
 			initialised: true,
 
@@ -97,87 +107,15 @@ export default class App extends React.Component<{}, IState> {
 	attemptLoadScore = attemptLoadScore;
 	saveBestScore = saveBestScore;
 
-	loadedSoundFiles: Map<string, HTMLAudioElement> | null = null;
-
 	// sounds.ts
 	playSound = playSound;
 	loadSoundFiles = loadSoundFiles;
 
-	readonly restartMessage = "You ran out of lives!  Press R to restart.";
-
-	/**
-	 * 
-	 * @param num The index starting from 1
-	 */
-	attemptHit(num: number) {
-		if (this.checkGameOver()) {
-			alert(this.restartMessage);
-			return;
-		}
-
-		const lastGoblin = Number(
-			this.state.goblinPosAry.slice(-1) + ""
-		);
-
-		if (lastGoblin === num - 1)
-			this.commitHit();
-		else this.missHit();
-	}
-
-	commitHit() {
-		const {
-			goblinPosAry,
-			score,
-
-			deadBodyAry,
-			floorBlood
-		} = this.state;
-
-		const lastGoblin = Number(
-			goblinPosAry.slice(-1) + ""
-		);
-
-		deadBodyAry[random(0, 1)] = true;
-		floorBlood[lastGoblin] = true;
-
-		this.playSound("slash" + (random(0, 2) + 1));
-
-		this.setState({
-			score: score + 10,
-			// Extend the goblin array
-			goblinPosAry: goblinPosAry.length < 20
-				? [...this.getStartingGoblins(), ...goblinPosAry.slice(0, -1)]
-				: goblinPosAry.slice(0, -1),
-			deadBodyAry
-		});
-	}
-
-	missHit() {
-		this.playSound("miss");
-
-		this.setState({
-			lives: this.state.lives - 1
-		}, () => {
-			if (this.checkGameOver()) {
-				this.saveBestScore();
-				alert(this.restartMessage);
-			}
-		});
-	}
-
-	checkGameOver = () => this.state.lives < 1;
-
-	// randInt = (max: number) =>
-	// 	Math.round(Math.random() * max);
-
-	get goblinMap() {
-		return this.state.goblinPosAry
-			.slice(-10)
-			.map(cell =>
-				[...new Array(3)]
-					.map((_, idx) => cell === idx)
-			)
-	}
+	// combatMethods.ts
+	attemptHit = attemptHit;
+	checkGameOver = checkGameOver;
+	commitHit = commitHit;
+	missHit = missHit;
 
 	// fragments.tsx
 	aboutAppFragment = aboutAppFragment;
