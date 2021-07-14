@@ -45,24 +45,24 @@ export default class App extends React.Component<{}, IState> {
 			floorBlood: []
 		};
 
-		// console.log(this.state.goblinPosAry);
-
 		this.loadSoundFiles();
 	}
 
 	componentDidMount() {
-		this.startNewGame();
-
 		this.attemptLoadScore();
+		this.bindKeyDownEvent();
+		this.startNewGame();
+	}
 
+	bindKeyDownEvent() {
 		window.addEventListener("keydown", (e) => {
 			console.log("keydown", e.key);
 
 			if ("123".includes(e.key))
 				this.attemptHit(Number(e.key));
 
-			if (e.key === "r")
-				if (this.checkGameOver())
+			if (e.key === "r"
+				&& this.checkGameOver())
 					this.startNewGame();
 		});
 	}
