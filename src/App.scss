@@ -1,0 +1,76 @@
+body {
+	background: black;
+	margin: 0;
+	padding: 5vh 10vw;
+
+	color: white;
+}
+
+.App {
+	font-size: 16px;
+}
+
+.heart {
+	color: red;
+}
+
+// .lives {
+
+// }
+
+.terrain {
+	text-align: center;
+
+	.goblin {
+		color: green;
+
+		&.bloody {
+			text-decoration: underline 4px darkred;
+		}
+	}
+
+	.soil {
+		color: olive;
+
+		&.bloody {
+			color: darkred;
+		}
+	}
+
+	.dead {
+		background: darkred;
+	}
+
+}
+
+.guide {
+	text-align: center;
+	color: grey;
+	margin: 16px 0;
+}
+
+.hero {
+	text-align: center;
+	color: pink;
+
+	& > .bonker {
+		color: silver;
+	}
+}
+
+.symbol-list {
+	margin-top: 48px;
+	margin-bottom: 16px;
+
+	.succubus {
+		color: pink;
+	}
+
+	.bonker {
+		color: silver;
+	}
+
+	.goblin {
+		color: green;
+	}
+}
