@@ -1,0 +1,66 @@
+15-07-2021
+
+Succubus & Goblins
+Art
+[V] Create the mobile game design concept
+[V] Create the character design sketch
+[ ] Create the goblin design sketch
+
+Dream Features
+Low effort (probably implemented)
+- Add hit/miss message (optional)
+- Add something like goblin boss, elite goblin or demon that rewards 1000 points when killed (30 hits to kill with button mash)
+- Add goblin death animation (flying with blue background)
+
+Medium effort
+- Add milestones to increase difficulty (100, 200, and so on)
+- Multiple goblins in one row (only on higher difficulty)
+- More goblin columns
+
+Unknown effort
+- Food to replenish lives
+- Add music
+- Goblins are actually fighting back when the player missed (make it something like a counterattack animation)
+- Dynamic direction: from east, south, and west
+- Add hurt voice (both Succubus & Goblins)
+- Goblins are scrolling smoothly from top to bottom like Piano Tiles
+- Timed reaction (3 second delay until the goblin hits back)
+- Explosive barrel/cacti (basically obstacles that reduce lives) (optional because just missing already reduces lives)
+
+- Also scroll the soil if possible
+- More soil variants: evil biome (mostly red & purple), good biome (mostly blue)
+- Hostages/kidnapped prisoners to rescue
+- Upgrades: weapon, lives & stronger goblins
+- Settlement view: to upgrade weapon & lives
+- Berserk mode: mash keyboard keys for 10 seconds to get the most goblins (also include its own N hits in a row system)
+- Duel mode: Every player is given the same set of goblins and they have to beat the most goblins in 1 minute
+- 1 minute mode: kill as many goblins in 1 minute
+- Story mode: make the story emotional (sad and happy)
+- Fake achievements: incremental achievement system with constant prizes
+- Idle game system: give players prize when they come back to the game within a specified timeframe
+
+Finished Features
+16-07-2021
+- Add the character movement when she attacks
+- Play count counter
+- Add N hits in a row
+- Add hit effect (red X)
+
+14-07-2021
+- Random goblin generator
+- Basic controls
+- Hit the goblin
+- Miss the goblin
+- Sound effects: 3 hit sound variants & miss
+- Basic score system
+- Best score system
+- Restart the game without refreshing
+- Static soil decoration
+- Blood on soil decoration
+- Dead goblins
+
+Low effort
+[ ] Post the Minecraft Banner Generator design
+[V] Post the prototype game "Succubus & Goblins"
+[ ] Post the mobile game design of "Succubus & Goblins"
+[V] Post the character design
