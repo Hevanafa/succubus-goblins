@@ -47,6 +47,18 @@ function mapFragment(this: App) {
 							}
 							{
 								row.map((cell, cellIdx) => {
+									const spanKey = `gm_${rowIdx}_${cellIdx}`;
+
+									if (isLastIdx && cellIdx === this.state.lastHitPos)
+										return (
+											<span
+												key={spanKey}
+												className="hit">
+												X
+											</span>
+										);
+
+
 									const isBloody = (isSecondLastIdx || isLastIdx)
 										&& floorBlood[cellIdx];
 
@@ -55,7 +67,7 @@ function mapFragment(this: App) {
 											?
 											// Goblin
 											<span
-												key={`gm_${rowIdx}_${cellIdx}`}
+												key={spanKey}
 												className={
 													(isBloody ? "bloody " : "") +
 													"goblin"
@@ -64,7 +76,7 @@ function mapFragment(this: App) {
 											</span> :
 											// Soil
 											<span
-												key={`gm_${rowIdx}_${cellIdx}`}
+												key={spanKey}
 												className={
 													(isBloody ? "bloody " : "") +
 													"soil"

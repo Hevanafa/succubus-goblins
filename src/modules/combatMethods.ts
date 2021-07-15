@@ -53,7 +53,18 @@ function commitHit(this: App) {
 		goblinPosAry: goblinPosAry.length < 20
 			? [...this.getStartingGoblins(), ...goblinPosAry.slice(0, -1)]
 			: goblinPosAry.slice(0, -1),
-		deadBodyAry
+		deadBodyAry,
+
+		lastHitPos: lastGoblin
+	}, () => {
+		if (this.hitEffectTimeout)
+			window.clearTimeout(this.hitEffectTimeout);
+
+		this.hitEffectTimeout = window.setTimeout((app: App) => {
+			app.setState({
+				lastHitPos: -1
+			});
+		}, 200, this);
 	});
 }
 

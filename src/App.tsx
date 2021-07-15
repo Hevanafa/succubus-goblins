@@ -25,6 +25,7 @@ interface IState {
 	soilAry: string[][];
 	deadBodyAry: boolean[]; // length: 2
 	floorBlood: boolean[]; // length: 3
+	lastHitPos: number;
 }
 
 const isDev = () => window.location.href.includes("localhost");
@@ -34,6 +35,8 @@ export default class App extends React.Component<{}, IState> {
 	readonly restartMessage = "You ran out of lives!  Press R to restart.";
 
 	protected loadedSoundFiles: Map<string, HTMLAudioElement> | null = null;
+
+	hitEffectTimeout = 0;
 
 	constructor(props?: any) {
 		super(props);
@@ -52,7 +55,8 @@ export default class App extends React.Component<{}, IState> {
 
 			soilAry: this.newSoilMap(),
 			deadBodyAry: [],
-			floorBlood: []
+			floorBlood: [],
+			lastHitPos: 0
 		};
 
 		this.loadSoundFiles();
@@ -118,7 +122,8 @@ export default class App extends React.Component<{}, IState> {
 			lives: 3,
 
 			deadBodyAry: [...new Array(2)].map(_ => false),
-			floorBlood: [...new Array(3)].map(_ => false)
+			floorBlood: [...new Array(3)].map(_ => false),
+			lastHitPos: -1
 		});
 	}
 
@@ -163,7 +168,7 @@ export default class App extends React.Component<{}, IState> {
 				{this.mapFragment()}
 				{this.guideFragment()}
 				{this.heroFragment()}
-				
+
 				<div className="hit-counter">
 					{
 						consecutiveHits > 3
