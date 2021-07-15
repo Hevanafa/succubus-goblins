@@ -1,6 +1,6 @@
 import App from "../App";
 
-const LSSaveDataKey = "SaveData";
+const LSSaveDataKey = "SnGSaveData";
 
 interface ISaveDataFormat {
 	bestScore: number;

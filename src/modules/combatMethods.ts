@@ -33,17 +33,22 @@ function commitHit(this: App) {
 		floorBlood
 	} = this.state;
 
+	let {consecutiveHits} = this.state;
+
 	const lastGoblin = Number(
 		goblinPosAry.slice(-1) + ""
 	);
 
 	deadBodyAry[random(0, 1)] = true;
 	floorBlood[lastGoblin] = true;
+	consecutiveHits++;
 
 	this.playSound("slash" + (random(0, 2) + 1));
 
 	this.setState({
-		score: score + 10,
+		score: score + 10 + consecutiveHits,
+		consecutiveHits,
+
 		// Extend the goblin array
 		goblinPosAry: goblinPosAry.length < 20
 			? [...this.getStartingGoblins(), ...goblinPosAry.slice(0, -1)]
@@ -56,6 +61,7 @@ function missHit(this: App) {
 	this.playSound("miss");
 
 	this.setState({
+		consecutiveHits: 0,
 		lives: this.state.lives - 1
 	}, () => {
 		if (this.checkGameOver()) {

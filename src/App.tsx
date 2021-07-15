@@ -19,6 +19,7 @@ interface IState {
 	// Either 0, 1 or 2
 	goblinPosAry: number[];
 	lives: number;
+	consecutiveHits: number;
 
 	// Decorations
 	soilAry: string[][];
@@ -47,6 +48,7 @@ export default class App extends React.Component<{}, IState> {
 			playerPos: 0,
 			goblinPosAry: [],
 			lives: 0,
+			consecutiveHits: 0,
 
 			soilAry: this.newSoilMap(),
 			deadBodyAry: [],
@@ -76,7 +78,7 @@ export default class App extends React.Component<{}, IState> {
 
 			if (e.key === "r"
 				&& this.checkGameOver())
-					this.startNewGame();
+				this.startNewGame();
 		});
 	}
 
@@ -109,6 +111,7 @@ export default class App extends React.Component<{}, IState> {
 
 			score: 0,
 			playCount: this.state.playCount + 1,
+			consecutiveHits: 0,
 
 			playerPos: 2,
 			goblinPosAry: this.getStartingGoblins(),
@@ -144,7 +147,12 @@ export default class App extends React.Component<{}, IState> {
 	symbolListFragment = symbolListFragment;
 
 	render() {
-		if (!this.state.initialised)
+		const {
+			initialised,
+			consecutiveHits
+		} = this.state;
+
+		if (!initialised)
 			return null;
 
 		return (
@@ -155,6 +163,15 @@ export default class App extends React.Component<{}, IState> {
 				{this.mapFragment()}
 				{this.guideFragment()}
 				{this.heroFragment()}
+				
+				<div className="hit-counter">
+					{
+						consecutiveHits > 3
+							? consecutiveHits + " hits!"
+							: "\u00a0"
+					}
+				</div>
+
 				{this.symbolListFragment()}
 				{this.aboutAppFragment()}
 			</div>

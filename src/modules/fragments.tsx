@@ -157,11 +157,19 @@ function symbolListFragment(this: App) {
 	);
 }
 
+const lastUpdateDate = new Date(2021, 6, 16);
+
 function aboutAppFragment(this: App) {
+	const lastUpdateStr = Intl.DateTimeFormat("en-GB", {
+		year: "numeric",
+		month: "short",
+		day: "numeric"
+	}).format(lastUpdateDate);
+
 	return (
 		<div className="about-app">
 			Made with <span className="heart">♥</span> by Hevanafa<br />
-			Last update: 14 July 2021
+			Last update: {lastUpdateStr}
 		</div>
 	);
 }
