@@ -75,7 +75,7 @@ export default class App extends React.Component<{}, IState> {
 
 	bindKeyDownEvent() {
 		window.addEventListener("keydown", (e) => {
-			console.log("keydown", e.key);
+			// console.log("keydown", e.key);
 
 			if ("123".includes(e.key))
 				this.attemptHit(Number(e.key));
