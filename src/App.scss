@@ -8,6 +8,11 @@ body {
 
 .App {
 	font-size: 16px;
+	user-select: none;
+
+	&.dev {
+		user-select: initial;
+	}
 }
 
 .heart {

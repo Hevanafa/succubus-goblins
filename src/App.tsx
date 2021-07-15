@@ -1,18 +1,21 @@
 import React from "react";
 
+import random from "./modules/random";
 import { attemptLoadScore, saveBestScore } from "./modules/scores";
 import { playSound, loadSoundFiles } from "./modules/sounds";
-
-import "./App.scss";
 import { aboutAppFragment, bestScoreFragment, guideFragment, heroFragment, livesFragment, mapFragment, scoreFragment, symbolListFragment } from "./modules/fragments";
 import { attemptHit, checkGameOver, commitHit, missHit } from "./modules/combatMethods";
-import random from "./modules/random";
+
+import "./App.scss";
 
 interface IState {
 	initialised: boolean;
 
 	score: number;
 	bestScore: number;
+	playCount: number;
+
+	playerPos: number;
 	// Either 0, 1 or 2
 	goblinPosAry: number[];
 	lives: number;
@@ -22,6 +25,8 @@ interface IState {
 	deadBodyAry: boolean[]; // length: 2
 	floorBlood: boolean[]; // length: 3
 }
+
+const isDev = () => window.location.href.includes("localhost");
 
 export default class App extends React.Component<{}, IState> {
 	readonly goblinAryCap = 50;
@@ -37,6 +42,9 @@ export default class App extends React.Component<{}, IState> {
 
 			score: 0,
 			bestScore: 0,
+			playCount: 0,
+
+			playerPos: 0,
 			goblinPosAry: [],
 			lives: 0,
 
@@ -49,6 +57,11 @@ export default class App extends React.Component<{}, IState> {
 	}
 
 	componentDidMount() {
+		if (!isDev())
+			window.oncontextmenu = e => {
+				e.preventDefault();
+			};
+
 		this.attemptLoadScore();
 		this.bindKeyDownEvent();
 		this.startNewGame();
@@ -95,6 +108,9 @@ export default class App extends React.Component<{}, IState> {
 			initialised: true,
 
 			score: 0,
+			playCount: this.state.playCount + 1,
+
+			playerPos: 2,
 			goblinPosAry: this.getStartingGoblins(),
 			lives: 3,
 
@@ -132,7 +148,7 @@ export default class App extends React.Component<{}, IState> {
 			return null;
 
 		return (
-			<div className="App">
+			<div className={`App${isDev() ? " dev" : ""}`}>
 				{this.livesFragment()}
 				{this.scoreFragment()}
 				{this.guideFragment()}

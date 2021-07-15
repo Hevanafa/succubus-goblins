@@ -95,20 +95,34 @@ function bestScoreFragment(this: App) {
 }
 
 function guideFragment(this: App) {
-	return this.state.score <= 100
-		?
-		<div className="guide">
-			123
-		</div> : <div className="guide">
-			···
-		</div>;
+	return <div className="guide">
+		{
+			this.state.score <= 100
+				? "123"
+				: "..."
+		}
+	</div>;
 }
 
 function heroFragment(this: App) {
+	const { playerPos } = this.state;
+
+	const leftMargin = playerPos > 0
+		? "\u00a0".repeat(playerPos)
+		: "",
+		rightMargin = playerPos < 3
+			? "\u00a0".repeat(3 - playerPos)
+			: "";
+
+	// {playerPos}
+	// <br />
+
 	return (
 		<div className="hero">
+			{leftMargin}
 			<span>s</span>
 			<span className="bonker">!</span>
+			{rightMargin}
 		</div>
 	);
 }

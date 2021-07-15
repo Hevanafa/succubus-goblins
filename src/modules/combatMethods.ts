@@ -15,6 +15,10 @@ function attemptHit(this: App, num: number) {
 		this.state.goblinPosAry.slice(-1) + ""
 	);
 
+	this.setState({
+		playerPos: num
+	});
+
 	if (lastGoblin === num - 1)
 		this.commitHit();
 	else this.missHit();

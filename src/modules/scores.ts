@@ -1,26 +1,45 @@
 import App from "../App";
 
-const LSScoreKey = "best_score";
+const LSSaveDataKey = "SaveData";
+
+interface ISaveDataFormat {
+	bestScore: number;
+	playCount: number;
+}
 
 function attemptLoadScore(this: App) {
-	let bestScore = localStorage.getItem(LSScoreKey);
+	let data = localStorage.getItem(LSSaveDataKey) as (string | null);
 
-	if (bestScore)
+	if (data) {
+		const savedData = JSON.parse(data) as ISaveDataFormat;
+		const {bestScore, playCount} = savedData;
+
 		this.setState({
-			bestScore: Number(bestScore)
+			bestScore,
+			playCount
 		});
+	}
 }
 
 function saveBestScore(this: App) {
-	const { score, bestScore } = this.state;
+	const {
+		bestScore,
+		playCount,
+		score
+	} = this.state;
 
-	if (score > bestScore) {
-		localStorage.setItem(LSScoreKey, score + "");
+	const saveData = JSON.stringify(
+		score > bestScore
+			? { bestScore: score, playCount }
+			: { bestScore, playCount }
+	);
 
+	localStorage.setItem(LSSaveDataKey, saveData);
+
+	if (score > bestScore)
 		this.setState({
 			bestScore: score
 		});
-	}
 }
 
 export {
