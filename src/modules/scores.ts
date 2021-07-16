@@ -38,7 +38,8 @@ function saveBestScore(this: App) {
 
 	if (score > bestScore)
 		this.setState({
-			bestScore: score
+			bestScore: score,
+			isNewBestScore: true
 		});
 }
 

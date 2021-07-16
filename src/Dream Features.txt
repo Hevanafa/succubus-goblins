@@ -11,6 +11,7 @@ Low effort (probably implemented)
 - Add hit/miss message (optional)
 - Add something like goblin boss, elite goblin or demon that rewards 1000 points when killed (30 hits to kill with button mash)
 - Add goblin death animation (flying with blue background)
+- Add walls which can be destroyed with button mash
 
 Medium effort
 - Add milestones to increase difficulty (100, 200, and so on)

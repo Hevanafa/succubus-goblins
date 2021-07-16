@@ -26,6 +26,24 @@ body {
 .terrain {
 	text-align: center;
 
+	.row {
+		display: flex;
+		justify-content: center;
+	}
+
+	.cell {
+		position: relative;
+
+	}
+
+	.n {
+		color: #571515;
+	}
+
+	.woman {
+		color: peachpuff;
+	}
+
 	.goblin {
 		color: green;
 
@@ -47,6 +65,10 @@ body {
 	}
 
 	.hit {
+		position: absolute;
+		left: 0;
+		top: 0;
+
 		color: red;
 	}
 

@@ -26,6 +26,9 @@ function mapFragment(this: App) {
 		soilAry
 	} = this.state;
 
+	const goblinLetter = "gN☻"[this.racistMode],
+		goblinClass = ["goblin", "n", "woman"][this.racistMode];
+
 	return (
 		<div className="terrain">
 			{
@@ -39,25 +42,29 @@ function mapFragment(this: App) {
 						];
 
 					return (
-						<div key={`gm_${rowIdx}`}>
+						<div
+							key={`gm_${rowIdx}`}
+							className="row">
 							{
 								isLastIdx && deadBodyAry[0]
-									? <span className="dead goblin">g</span>
+									? <span
+										className={`dead ${goblinClass}`}>
+											{goblinLetter}
+										</span>
 									: "\u00a0"
 							}
 							{
 								row.map((cell, cellIdx) => {
 									const spanKey = `gm_${rowIdx}_${cellIdx}`;
 
-									if (isLastIdx && cellIdx === this.state.lastHitPos)
-										return (
+									const hitCell = isLastIdx && cellIdx === this.state.lastHitPos
+										? (
 											<span
 												key={spanKey}
 												className="hit">
 												X
 											</span>
-										);
-
+										) : null;
 
 									const isBloody = (isSecondLastIdx || isLastIdx)
 										&& floorBlood[cellIdx];
@@ -66,29 +73,34 @@ function mapFragment(this: App) {
 										cell
 											?
 											// Goblin
-											<span
+											<div
 												key={spanKey}
 												className={
 													(isBloody ? "bloody " : "") +
-													"goblin"
+													`${goblinClass} cell`
 												}>
-												g
-											</span> :
+												{goblinLetter}
+												{hitCell}
+											</div> :
 											// Soil
-											<span
+											<div
 												key={spanKey}
 												className={
 													(isBloody ? "bloody " : "") +
-													"soil"
+													"soil cell"
 												}>
 												{soilAry[rowIdx][cellIdx]}
-											</span>
+												{hitCell}
+											</div>
 									);
 								}) // "\u00a0"
 							}
 							{
 								isLastIdx && deadBodyAry[1]
-									? <span className="dead goblin">g</span>
+									? <span
+										className={`dead ${goblinClass}`}>
+											{goblinLetter}
+										</span>
 									: "\u00a0"
 							}
 						</div>
@@ -100,18 +112,23 @@ function mapFragment(this: App) {
 }
 
 function bestScoreFragment(this: App) {
+	const {
+		bestScore,
+		isNewBestScore
+	} = this.state;
+
 	return <>
 		<br />
-		Best: {this.state.bestScore}
+		Best: {bestScore} {isNewBestScore ? "NEW BEST!" : null}
 	</>;
 }
 
 function guideFragment(this: App) {
 	return <div className="guide">
 		{
-			this.state.score <= 100
-				? "123"
-				: "..."
+			this.state.consecutiveHits <= 10
+				? this.keyGuide
+				: ".".repeat(this.keyGuide.length)
 		}
 	</div>;
 }
@@ -122,8 +139,8 @@ function heroFragment(this: App) {
 	const leftMargin = playerPos > 0
 		? "\u00a0".repeat(playerPos)
 		: "",
-		rightMargin = playerPos < 3
-			? "\u00a0".repeat(3 - playerPos)
+		rightMargin = playerPos < this.terrainCols
+			? "\u00a0".repeat(this.terrainCols - playerPos)
 			: "";
 
 	// {playerPos}
@@ -132,7 +149,7 @@ function heroFragment(this: App) {
 	return (
 		<div className="hero">
 			{leftMargin}
-			<span>s</span>
+			<span>@</span>
 			<span className="bonker">!</span>
 			{rightMargin}
 		</div>
@@ -154,7 +171,7 @@ function symbolListFragment(this: App) {
 			</div>
 
 			<div>
-				<span className="succubus">s</span>
+				<span className="succubus">@</span>
 				<span>: Succubus</span>
 			</div>
 			<div>

@@ -13,6 +13,7 @@ interface IState {
 
 	score: number;
 	bestScore: number;
+	isNewBestScore: boolean;
 	playCount: number;
 
 	playerPos: number;
@@ -33,6 +34,10 @@ const isDev = () => window.location.href.includes("localhost");
 export default class App extends React.Component<{}, IState> {
 	readonly goblinAryCap = 50;
 	readonly restartMessage = "You ran out of lives!  Press R to restart.";
+	readonly terrainCols = 3;
+	readonly keyGuide = "123"; // "123" | "DFJK" | "SDF JKL";
+	
+	readonly racistMode: number = 0;
 
 	protected loadedSoundFiles: Map<string, HTMLAudioElement> | null = null;
 
@@ -46,6 +51,7 @@ export default class App extends React.Component<{}, IState> {
 
 			score: 0,
 			bestScore: 0,
+			isNewBestScore: false,
 			playCount: 0,
 
 			playerPos: 0,
@@ -70,17 +76,26 @@ export default class App extends React.Component<{}, IState> {
 
 		this.attemptLoadScore();
 		this.bindKeyDownEvent();
-		this.startNewGame();
+
+		window.setTimeout(() => {
+			this.startNewGame();
+		}, 100);
 	}
 
 	bindKeyDownEvent() {
 		window.addEventListener("keydown", (e) => {
 			// console.log("keydown", e.key);
 
-			if ("123".includes(e.key))
-				this.attemptHit(Number(e.key));
+			// if ("123".includes(e.key))
+			// 	this.attemptHit(Number(e.key));
 
-			if (e.key === "r"
+			const inputKey = e.key.toLowerCase();
+			const keys = this.keyGuide.toLowerCase();// "dfjk";
+
+			if (keys.includes(inputKey))
+				this.attemptHit(keys.indexOf(inputKey) + 1);
+
+			if (inputKey === "r"
 				&& this.checkGameOver())
 				this.startNewGame();
 		});
@@ -90,7 +105,7 @@ export default class App extends React.Component<{}, IState> {
 		return this.state.goblinPosAry
 			.slice(-10)
 			.map(cell =>
-				[...new Array(3)]
+				[...new Array(this.terrainCols)]
 					.map((_, idx) => cell === idx)
 			)
 	}
@@ -98,7 +113,7 @@ export default class App extends React.Component<{}, IState> {
 	newSoilMap = () =>
 		[...new Array(10)]
 			.map(_ =>
-				[...new Array(3)].map(
+				[...new Array(this.terrainCols)].map(
 					_ => ".,'`"[random(0, 3)]
 				)
 			);
@@ -106,7 +121,7 @@ export default class App extends React.Component<{}, IState> {
 	protected getStartingGoblins = () =>
 		[...new Array(this.goblinAryCap)]
 			.map(_ =>
-				random(0, 2)
+				random(0, this.terrainCols - 1)
 			);
 
 	private startNewGame() {
@@ -116,6 +131,7 @@ export default class App extends React.Component<{}, IState> {
 			score: 0,
 			playCount: this.state.playCount + 1,
 			consecutiveHits: 0,
+			isNewBestScore: false,
 
 			playerPos: 2,
 			goblinPosAry: this.getStartingGoblins(),
