@@ -12,15 +12,17 @@ Low effort (probably implemented)
 - Add something like goblin boss, elite goblin or demon that rewards 1000 points when killed (30 hits to kill with button mash)
 - Add goblin death animation (flying with blue background)
 - Add walls which can be destroyed with button mash
+- Make the succubus letter blink like a legendary warrior
 
 Medium effort
 - Add milestones to increase difficulty (100, 200, and so on)
 - Multiple goblins in one row (only on higher difficulty)
+	(feature is ready but not yet related to milestones)
 - More goblin columns
 
 Unknown effort
 - Food to replenish lives
-- Add music
+- Add music (optional)
 - Goblins are actually fighting back when the player missed (make it something like a counterattack animation)
 - Dynamic direction: from east, south, and west
 - Add hurt voice (both Succubus & Goblins)
