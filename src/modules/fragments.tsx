@@ -13,8 +13,25 @@ function livesFragment(this: App) {
 function scoreFragment(this: App) {
 	return (
 		<div className="score">
-			Score: {this.state.score}
-			{this.bestScoreFragment()}
+			<div className="normal-font">
+				SCORE
+			</div>
+			<div>
+				{(this.state.score + "").padStart(6, "0")}
+			</div>
+		</div>
+	);
+}
+
+function bestScoreFragment(this: App) {
+	return (
+		<div className="score">
+			<div className="normal-font">
+				BEST
+			</div>
+			<div>
+				{(this.state.bestScore + "").padStart(6, "0")}
+			</div>
 		</div>
 	);
 }
@@ -49,8 +66,8 @@ function mapFragment(this: App) {
 								isLastIdx && deadBodyAry[0]
 									? <span
 										className={`dead ${goblinClass}`}>
-											{goblinLetter}
-										</span>
+										{goblinLetter}
+									</span>
 									: "\u00a0"
 							}
 							{
@@ -99,8 +116,8 @@ function mapFragment(this: App) {
 								isLastIdx && deadBodyAry[1]
 									? <span
 										className={`dead ${goblinClass}`}>
-											{goblinLetter}
-										</span>
+										{goblinLetter}
+									</span>
 									: "\u00a0"
 							}
 						</div>
@@ -109,18 +126,6 @@ function mapFragment(this: App) {
 			}
 		</div>
 	);
-}
-
-function bestScoreFragment(this: App) {
-	const {
-		bestScore,
-		isNewBestScore
-	} = this.state;
-
-	return <>
-		<br />
-		Best: {bestScore} {isNewBestScore ? "NEW BEST!" : null}
-	</>;
 }
 
 function guideFragment(this: App) {

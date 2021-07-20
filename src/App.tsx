@@ -175,6 +175,12 @@ export default class App extends React.Component<{}, IState> {
 
 	noop() { }
 
+	buttonClickEventHandler(e: React.MouseEvent) {
+		const name = e.currentTarget.getAttribute("name");
+
+		console.log(name);
+	}
+
 	render() {
 		const {
 			initialised,
@@ -188,22 +194,25 @@ export default class App extends React.Component<{}, IState> {
 			<div className={`App${isDev() ? " dev" : ""}`}>
 				<img
 					className="placeholder"
-					src="/assets/img/bg_placeholder.png"
+					src="/assets/img/bg_clean.png"
 					alt="placeholder" />
 
 				<div className="big-buttons">
 					{/* Todo: make this interactive */}
 					<BigButton
 						className="btn-1"
-						clickEvent={this.noop.bind(this)}
+						name="btn_1"
+						clickEvent={this.buttonClickEventHandler.bind(this)}
 					/>
 					<BigButton
 						className="btn-2"
-						clickEvent={this.noop.bind(this)}
+						name="btn_2"
+						clickEvent={this.buttonClickEventHandler.bind(this)}
 					/>
 					<BigButton
 						className="btn-3"
-						clickEvent={this.noop.bind(this)}
+						name="btn_3"
+						clickEvent={this.buttonClickEventHandler.bind(this)}
 					/>
 
 					{/* <img
@@ -224,8 +233,10 @@ export default class App extends React.Component<{}, IState> {
 					{
 						["lore", "sounds", "reset"].map(item =>
 							<SmallButton
+								key={`BS_${item}`}
 								className=""
-								clickEvent={this.noop.bind(this)}
+								name={`btn_${item}`}
+								clickEvent={this.buttonClickEventHandler.bind(this)}
 							/>
 						)
 					}
@@ -241,7 +252,30 @@ export default class App extends React.Component<{}, IState> {
 				</div>
 
 				<div className="screen">
+					<div className="left-panel">
 
+					</div>
+
+					<div className="right-panel">
+						{this.scoreFragment()}
+						<br />
+						{this.bestScoreFragment()}
+						<br />
+						{this.livesFragment()}
+						<br />
+						<div className="sounds">
+							<img
+								src="/assets/img/sounds.png"
+								alt="sounds" />
+							<div className="normal-font">
+								SOUNDS
+							</div>
+						</div>
+						<br />
+						<div className="game-over normal-font">
+							GAME<br />OVER!
+						</div>
+					</div>
 				</div>
 
 			</div>

@@ -6,6 +6,10 @@ body {
 	color: white;
 }
 
+.normal-font {
+	font-family: Roboto, sans-serif;
+}
+
 .App {
 	position: fixed;
 	top: 0;
@@ -13,7 +17,8 @@ body {
 	margin: auto;
 	height: fit-content;
 
-	font-size: 16px;
+	// font-size: 16px;
+	font-size: 1.5vh;
 	user-select: none;
 
 	&.dev {
@@ -24,6 +29,8 @@ body {
 .placeholder {
 	position: relative;
 	max-width: 100vw;
+
+	// opacity: 50%;
 }
 
 .screen {
@@ -35,6 +42,47 @@ body {
 	left: 10vw;
 	width: 80vw;
 	height: 35vh;
+
+	padding: 2vh 4vw;
+
+	display: flex;
+
+	// top: 11vh;
+    // left: 14vw;
+    // width: 72vw;
+    // height: 31vh;
+
+	.left-panel {
+		flex-grow: 1;
+	}
+
+	.right-panel {
+		position: relative;
+
+		padding-left: 4vw;
+		border-left: 2px solid white;
+
+		.sounds {
+			& > img {
+				height: 5vh;
+			}
+
+			.normal-font {
+				font-size: 1.5vh;
+			}
+		}
+
+		.sounds,
+		.game-over {
+			text-align: center;
+		}
+
+		.game-over {
+			position: absolute;
+			bottom: 0;
+			width: calc(100% - 4vw);
+		}
+	}
 }
 
 .btn-big {
