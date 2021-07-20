@@ -3,7 +3,7 @@ import React from "react";
 import random from "./modules/random";
 import { attemptLoadScore, saveBestScore } from "./modules/scores";
 import { playSound, loadSoundFiles } from "./modules/sounds";
-import { aboutAppFragment, bestScoreFragment, guideFragment, heroFragment, livesFragment, mapFragment, scoreFragment, symbolListFragment } from "./modules/fragments";
+import { aboutAppFragment, bestScoreFragment, gameOverFragment, guideFragment, heroFragment, livesFragment, mapFragment, scoreFragment, soundsFragment, symbolListFragment } from "./modules/fragments";
 import { attemptHit, checkGameOver, commitHit, missHit } from "./modules/combatMethods";
 
 import "./App.scss";
@@ -116,9 +116,9 @@ export default class App extends React.Component<{}, IState> {
 			const keys = this.keyGuide.toLowerCase(); // "123" or "dfjk";
 
 			if (keys.includes(inputKey)) {
-				const { buttonPress: buttonPressState } = this.state;
-				buttonPressState[keys.indexOf(inputKey)] = true;
-				this.setState({ buttonPress: buttonPressState });
+				const { buttonPress } = this.state;
+				buttonPress[keys.indexOf(inputKey)] = true;
+				this.setState({ buttonPress });
 
 				this.attemptHit(keys.indexOf(inputKey) + 1);
 			}
@@ -135,9 +135,9 @@ export default class App extends React.Component<{}, IState> {
 				keys = this.keyGuide.toLowerCase(); // "123" or "dfjk";
 
 			if (keys.includes(inputKey)) {
-				const { buttonPress: buttonPressState } = this.state;
-				buttonPressState[keys.indexOf(inputKey)] = true;
-				this.setState({ buttonPress: buttonPressState });
+				const { buttonPress } = this.state;
+				buttonPress[keys.indexOf(inputKey)] = false;
+				this.setState({ buttonPress });
 			}
 		});
 	}
@@ -177,6 +177,7 @@ export default class App extends React.Component<{}, IState> {
 			playerPos: 2,
 			goblinPosAry: this.getStartingGoblins(),
 			lives: 3,
+			isOver: false,
 
 			deadBodyAry: [...new Array(2)].map(_ => false),
 			floorBlood: [...new Array(3)].map(_ => false),
@@ -200,12 +201,14 @@ export default class App extends React.Component<{}, IState> {
 
 	// fragments.tsx
 	aboutAppFragment = aboutAppFragment;
+	scoreFragment = scoreFragment;
 	bestScoreFragment = bestScoreFragment;
+	soundsFragment = soundsFragment;
+	gameOverFragment = gameOverFragment;
 	guideFragment = guideFragment;
 	heroFragment = heroFragment;
 	livesFragment = livesFragment;
 	mapFragment = mapFragment;
-	scoreFragment = scoreFragment;
 	symbolListFragment = symbolListFragment;
 
 	noop() { }
@@ -215,21 +218,34 @@ export default class App extends React.Component<{}, IState> {
 
 		console.log("MouseDown", name);
 
-		if (!name.startsWith("btn_"))
+		if (!name || !name.startsWith("btn_"))
 			return;
 
-		const buttonName = name.split("_")[1];
+		const buttonName = name.split("_")[1],
+			{ smallButtonPress } = this.state;
+
+		if (this.smallButtons.includes(buttonName)) {
+			smallButtonPress.set(buttonName, true);
+			this.setState({ smallButtonPress });
+		}
 
 		switch (buttonName) {
 			case "1":
 			case "2":
 			case "3":
-				const { buttonPress: buttonPressState } = this.state;
-				buttonPressState[Number(name.split("_")[1]) - 1] = true;
-				this.setState({ buttonPress: buttonPressState });
+				this.attemptHit(Number(buttonName));
+
+				const { buttonPress } = this.state;
+				buttonPress[Number(name.split("_")[1]) - 1] = true;
+				this.setState({ buttonPress });
 				break;
 
-			// Todo: small buttons
+			// Done: small buttons
+			case "lore":
+				this.setState({
+					isLoreVisible: !this.state.isLoreVisible
+				});
+				break;
 
 			case "sounds":
 				this.setState({
@@ -240,7 +256,6 @@ export default class App extends React.Component<{}, IState> {
 				// Todo: set isOver state
 				if (this.state.isOver)
 					this.startNewGame();
-				break;
 		}
 	}
 
@@ -249,7 +264,7 @@ export default class App extends React.Component<{}, IState> {
 
 		console.log("MouseUp", name);
 
-		if (!name.startsWith("btn_"))
+		if (!name || !name.startsWith("btn_"))
 			return;
 
 		const buttonName = name.split("_")[1];
@@ -258,9 +273,9 @@ export default class App extends React.Component<{}, IState> {
 			case "1":
 			case "2":
 			case "3":
-				const { buttonPress: buttonPressState } = this.state;
-				buttonPressState[Number(name.split("_")[1]) - 1] = true;
-				this.setState({ buttonPress: buttonPressState });
+				const { buttonPress } = this.state;
+				buttonPress[Number(name.split("_")[1]) - 1] = false;
+				this.setState({ buttonPress });
 				break;
 
 			// Small buttons
@@ -274,23 +289,6 @@ export default class App extends React.Component<{}, IState> {
 
 		}
 	}
-
-	soundsFragment = () => (
-		<div className="sounds">
-			<img
-				src="/assets/img/sounds.png"
-				alt="sounds" />
-			<div className="normal-font">
-				SOUNDS
-			</div>
-		</div>
-	);
-
-	gameOverFragment = () => (
-		<div className="game-over normal-font">
-			GAME<br />OVER!
-		</div>
-	);
 
 	render() {
 		const {
@@ -311,9 +309,9 @@ export default class App extends React.Component<{}, IState> {
 					alt="placeholder" />
 
 				<div className="big-buttons">
-					{/* Todo: make this interactive */}
+					{/* Done: make this interactive */}
 					{
-						// Todo: make the keyboard input look like the buttons on the screen
+						// Done: make the keyboard input look like the buttons on the screen
 						[1, 2, 3].map((num, idx) =>
 							<BigButton
 								key={`btn_${num}`}
@@ -336,7 +334,7 @@ export default class App extends React.Component<{}, IState> {
 								className=""
 								name={`btn_${item}`}
 
-								isPressed={smallButtonPress.get(item)}
+								isPressed={smallButtonPress.get(item) || false}
 								mouseDownEventHandler={this.mouseDownEventHandler.bind(this)}
 								mouseUpEventHandler={this.mouseUpEventHandler.bind(this)}
 							/>
@@ -346,9 +344,10 @@ export default class App extends React.Component<{}, IState> {
 
 				<div className="screen">
 					<div className="left-panel">
-						{
-							// Todo: show the gameplay
-						}
+						{this.guideFragment()}
+						{this.mapFragment()}
+						{this.guideFragment()}
+						{this.heroFragment()}
 					</div>
 
 					<div className="right-panel">
@@ -358,18 +357,9 @@ export default class App extends React.Component<{}, IState> {
 						<br />
 						{this.livesFragment()}
 						<br />
-						{
-							this.state.playSounds
-								? this.soundsFragment()
-								: null
-						}
-
+						{this.soundsFragment()}
 						<br />
-						{
-							this.state.isOver
-								? this.gameOverFragment()
-								: null
-						}
+						{this.gameOverFragment()}
 					</div>
 				</div>
 

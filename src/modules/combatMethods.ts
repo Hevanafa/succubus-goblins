@@ -6,8 +6,8 @@ import random from "./random";
 	 * @param num The index starting from 1
 	 */
 function attemptHit(this: App, num: number) {
-	if (this.checkGameOver()) {
-		alert(this.restartMessage);
+	if (this.state.isOver) {
+		// alert(this.restartMessage);
 		return;
 	}
 
@@ -85,7 +85,8 @@ function missHit(this: App) {
 	}, () => {
 		if (this.checkGameOver()) {
 			this.saveBestScore();
-			alert(this.restartMessage);
+			this.setState({ isOver: true });
+			// alert(this.restartMessage);
 		}
 	});
 }

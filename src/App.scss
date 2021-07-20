@@ -6,6 +6,10 @@ body {
 	color: white;
 }
 
+button {
+	outline: none;
+}
+
 .normal-font {
 	font-family: Roboto, sans-serif;
 }
@@ -81,7 +85,27 @@ body {
 			position: absolute;
 			bottom: 0;
 			width: calc(100% - 4vw);
+
+			animation: 2s game-over-blink infinite;
 		}
+	}
+}
+
+@keyframes game-over-blink {
+	0% {
+		opacity: 100%;
+	}
+
+	49% {
+		opacity: 100%;
+	}
+
+	50% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 0;
 	}
 }
 

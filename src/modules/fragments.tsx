@@ -36,6 +36,34 @@ function bestScoreFragment(this: App) {
 	);
 }
 
+function soundsFragment(this: App) {
+	if (!this.state.playSounds)
+		return null;
+
+	return (
+		<div className="sounds">
+			<img
+				src="/assets/img/sounds.png"
+				alt="sounds" />
+			<div className="normal-font">
+				SOUNDS
+			</div>
+		</div>
+	);
+}
+
+function gameOverFragment(this: App) {
+	if (!this.state.isOver)
+		return null;
+
+	return (
+		<div className="game-over normal-font">
+			GAME<br />OVER!
+		</div>
+	);
+}
+
+
 function mapFragment(this: App) {
 	const {
 		deadBodyAry,
@@ -210,11 +238,15 @@ function aboutAppFragment(this: App) {
 
 export {
 	aboutAppFragment,
+	scoreFragment,
 	bestScoreFragment,
+
+	soundsFragment,
+	gameOverFragment,
+
 	guideFragment,
 	heroFragment,
 	livesFragment,
 	mapFragment,
-	scoreFragment,
 	symbolListFragment
 };
