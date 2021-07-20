@@ -30,7 +30,8 @@ function commitHit(this: App) {
 		score,
 
 		deadBodyAry,
-		floorBlood
+		floorBlood,
+		playSounds
 	} = this.state;
 
 	let {consecutiveHits} = this.state;
@@ -43,7 +44,8 @@ function commitHit(this: App) {
 	floorBlood[lastGoblin] = true;
 	consecutiveHits++;
 
-	this.playSound("slash" + (random(0, 2) + 1));
+	if (playSounds)
+		this.playSound("slash" + (random(0, 2) + 1));
 
 	this.setState({
 		score: score + 10 + consecutiveHits,
@@ -69,11 +71,17 @@ function commitHit(this: App) {
 }
 
 function missHit(this: App) {
-	this.playSound("miss");
+	const { playSounds } = this.state;
+	let { lives } = this.state;
+
+	lives--;
+
+	if (playSounds)
+		this.playSound("miss");
 
 	this.setState({
 		consecutiveHits: 0,
-		lives: this.state.lives - 1
+		lives
 	}, () => {
 		if (this.checkGameOver()) {
 			this.saveBestScore();

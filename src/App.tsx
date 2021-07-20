@@ -30,7 +30,13 @@ interface IState {
 	floorBlood: boolean[]; // length: 3
 	lastHitPos: number;
 
-	controllerButtons: boolean[]; // length: 3
+	// v2 with game UI
+	isOver: boolean;
+	playSounds: boolean;
+	isLoreVisible: boolean;
+
+	buttonPress: boolean[]; // length: 3
+	smallButtonPress: Map<string, boolean>;
 }
 
 const isDev = () => window.location.href.includes("localhost");
@@ -44,6 +50,8 @@ export default class App extends React.Component<{}, IState> {
 	readonly racistMode: number = 0;
 
 	protected loadedSoundFiles: Map<string, HTMLAudioElement> | null = null;
+
+	private smallButtons = ["lore", "sounds", "reset"];
 
 	hitEffectTimeout = 0;
 
@@ -68,7 +76,15 @@ export default class App extends React.Component<{}, IState> {
 			floorBlood: [],
 			lastHitPos: 0,
 
-			controllerButtons: [false, false, false]
+			isOver: false,
+			playSounds: true, // Todo: save sounds into the save data
+			isLoreVisible: false,
+
+			buttonPress: [false, false, false],
+			smallButtonPress: this.smallButtons.reduce((prev, newKey) => {
+				prev.set(newKey, false);
+				return prev;
+			}, new Map())
 		};
 
 		this.loadSoundFiles();
@@ -82,6 +98,7 @@ export default class App extends React.Component<{}, IState> {
 
 		this.attemptLoadScore();
 		this.bindKeyDownEvent();
+		this.bindKeyUpEvent();
 
 		window.setTimeout(() => {
 			this.startNewGame();
@@ -96,14 +113,32 @@ export default class App extends React.Component<{}, IState> {
 			// 	this.attemptHit(Number(e.key));
 
 			const inputKey = e.key.toLowerCase();
-			const keys = this.keyGuide.toLowerCase();// "dfjk";
+			const keys = this.keyGuide.toLowerCase(); // "123" or "dfjk";
 
-			if (keys.includes(inputKey))
+			if (keys.includes(inputKey)) {
+				const { buttonPress: buttonPressState } = this.state;
+				buttonPressState[keys.indexOf(inputKey)] = true;
+				this.setState({ buttonPress: buttonPressState });
+
 				this.attemptHit(keys.indexOf(inputKey) + 1);
+			}
 
 			if (inputKey === "r"
 				&& this.checkGameOver())
 				this.startNewGame();
+		});
+	}
+
+	bindKeyUpEvent() {
+		window.addEventListener("keyup", (e) => {
+			const inputKey = e.key.toLowerCase(),
+				keys = this.keyGuide.toLowerCase(); // "123" or "dfjk";
+
+			if (keys.includes(inputKey)) {
+				const { buttonPress: buttonPressState } = this.state;
+				buttonPressState[keys.indexOf(inputKey)] = true;
+				this.setState({ buttonPress: buttonPressState });
+			}
 		});
 	}
 
@@ -175,16 +210,94 @@ export default class App extends React.Component<{}, IState> {
 
 	noop() { }
 
-	buttonClickEventHandler(e: React.MouseEvent) {
+	mouseDownEventHandler(e: React.MouseEvent) {
 		const name = e.currentTarget.getAttribute("name");
 
-		console.log(name);
+		console.log("MouseDown", name);
+
+		if (!name.startsWith("btn_"))
+			return;
+
+		const buttonName = name.split("_")[1];
+
+		switch (buttonName) {
+			case "1":
+			case "2":
+			case "3":
+				const { buttonPress: buttonPressState } = this.state;
+				buttonPressState[Number(name.split("_")[1]) - 1] = true;
+				this.setState({ buttonPress: buttonPressState });
+				break;
+
+			// Todo: small buttons
+
+			case "sounds":
+				this.setState({
+					playSounds: !this.state.playSounds
+				});
+				break;
+			case "reset":
+				// Todo: set isOver state
+				if (this.state.isOver)
+					this.startNewGame();
+				break;
+		}
 	}
+
+	mouseUpEventHandler(e: React.MouseEvent) {
+		const name = e.currentTarget.getAttribute("name");
+
+		console.log("MouseUp", name);
+
+		if (!name.startsWith("btn_"))
+			return;
+
+		const buttonName = name.split("_")[1];
+
+		switch (buttonName) {
+			case "1":
+			case "2":
+			case "3":
+				const { buttonPress: buttonPressState } = this.state;
+				buttonPressState[Number(name.split("_")[1]) - 1] = true;
+				this.setState({ buttonPress: buttonPressState });
+				break;
+
+			// Small buttons
+			case "lore":
+			case "sounds":
+			case "reset":
+				const { smallButtonPress } = this.state;
+				smallButtonPress.set(buttonName, false);
+				this.setState({ smallButtonPress });
+				break;
+
+		}
+	}
+
+	soundsFragment = () => (
+		<div className="sounds">
+			<img
+				src="/assets/img/sounds.png"
+				alt="sounds" />
+			<div className="normal-font">
+				SOUNDS
+			</div>
+		</div>
+	);
+
+	gameOverFragment = () => (
+		<div className="game-over normal-font">
+			GAME<br />OVER!
+		</div>
+	);
 
 	render() {
 		const {
 			initialised,
-			consecutiveHits
+
+			buttonPress,
+			smallButtonPress
 		} = this.state;
 
 		if (!initialised)
@@ -199,61 +312,43 @@ export default class App extends React.Component<{}, IState> {
 
 				<div className="big-buttons">
 					{/* Todo: make this interactive */}
-					<BigButton
-						className="btn-1"
-						name="btn_1"
-						clickEvent={this.buttonClickEventHandler.bind(this)}
-					/>
-					<BigButton
-						className="btn-2"
-						name="btn_2"
-						clickEvent={this.buttonClickEventHandler.bind(this)}
-					/>
-					<BigButton
-						className="btn-3"
-						name="btn_3"
-						clickEvent={this.buttonClickEventHandler.bind(this)}
-					/>
+					{
+						// Todo: make the keyboard input look like the buttons on the screen
+						[1, 2, 3].map((num, idx) =>
+							<BigButton
+								key={`btn_${num}`}
+								className={`btn-${num}`}
+								name={`btn_${num}`}
 
-					{/* <img
-						className="btn-1"
-						src="/assets/img/btn_big.png"
-						alt="1" />
-					<img
-						className="btn-2"
-						src="/assets/img/btn_big.png"
-						alt="2" />
-					<img
-						className="btn-3"
-						src="/assets/img/btn_big.png"
-						alt="3" /> */}
+								isPressed={buttonPress[idx]}
+								mouseDownEventHandler={this.mouseDownEventHandler.bind(this)}
+								mouseUpEventHandler={this.mouseUpEventHandler.bind(this)}
+							/>
+						)
+					}
 				</div>
 
 				<div className="small-buttons">
 					{
-						["lore", "sounds", "reset"].map(item =>
+						this.smallButtons.map(item =>
 							<SmallButton
 								key={`BS_${item}`}
 								className=""
 								name={`btn_${item}`}
-								clickEvent={this.buttonClickEventHandler.bind(this)}
+
+								isPressed={smallButtonPress.get(item)}
+								mouseDownEventHandler={this.mouseDownEventHandler.bind(this)}
+								mouseUpEventHandler={this.mouseUpEventHandler.bind(this)}
 							/>
 						)
 					}
-					{/* <img
-						src="/assets/img/btn_small.png"
-						alt="lore" />
-					<img
-						src="/assets/img/btn_small.png"
-						alt="sounds" />
-					<img
-						src="/assets/img/btn_small.png"
-						alt="reset" /> */}
 				</div>
 
 				<div className="screen">
 					<div className="left-panel">
-
+						{
+							// Todo: show the gameplay
+						}
 					</div>
 
 					<div className="right-panel">
@@ -263,18 +358,18 @@ export default class App extends React.Component<{}, IState> {
 						<br />
 						{this.livesFragment()}
 						<br />
-						<div className="sounds">
-							<img
-								src="/assets/img/sounds.png"
-								alt="sounds" />
-							<div className="normal-font">
-								SOUNDS
-							</div>
-						</div>
+						{
+							this.state.playSounds
+								? this.soundsFragment()
+								: null
+						}
+
 						<br />
-						<div className="game-over normal-font">
-							GAME<br />OVER!
-						</div>
+						{
+							this.state.isOver
+								? this.gameOverFragment()
+								: null
+						}
 					</div>
 				</div>
 

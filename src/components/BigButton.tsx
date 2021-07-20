@@ -2,7 +2,9 @@ import React from "react";
 
 export interface IButtonProps {
 	className: string;
-	clickEvent: (e: React.MouseEvent) => void;
+	mouseUpEventHandler: (e: any) => void;
+	mouseDownEventHandler: (e: any) => void;
+	isPressed: boolean;
 	
 	/** The name for clickEvent currentTarget */
 	name: string;
@@ -11,50 +13,58 @@ export interface IButtonProps {
 	isSmall?: boolean;
 }
 
-interface IState {
-	isPressed: boolean;
-}
-export default class BigButton extends React.Component<IButtonProps, IState> {
-	constructor(props: IButtonProps) {
-		super(props);
+// interface IState {
+// 	isPressed: boolean;
+// }
+export default class BigButton extends React.Component<IButtonProps> {
+	// constructor(props: IButtonProps) {
+	// 	super(props);
 
-		this.state = {
-			isPressed: false
-		};
+		// this.state = {
+		// 	isPressed: false
+		// };
 
-		this.bindMouseMethods();
-	}
+		// this.bindMouseMethods();
+	// }
 
-	bindMouseMethods() {
-		this.mouseDownEventHandler = this.mouseDownEventHandler.bind(this);
-		this.mouseUpEventHandler = this.mouseUpEventHandler.bind(this);
-	}
+	// bindMouseMethods() {
+	// 	this.mouseDownEventHandler = this.mouseDownEventHandler.bind(this);
+	// 	this.mouseUpEventHandler = this.mouseUpEventHandler.bind(this);
+	// }
 
-	mouseDownEventHandler(e: any) {
-		this.props.clickEvent(e);
-		this.setState({ isPressed: true });
-	}
+	// mouseDownEventHandler(e: any) {
+	// 	this.props.clickEvent(e);
+	// 	this.setState({ isPressed: true });
+	// }
 
-	mouseUpEventHandler(e: any) {
-		this.setState({ isPressed: false });
-	}
+	// mouseUpEventHandler(e: any) {
+	// 	this.setState({ isPressed: false });
+	// }
 
 	render() {
-		const { className, isSmall, name } = this.props;
-		const { isPressed } = this.state;
+		const {
+			className,
+			isPressed,
+			isSmall,
+			name,
+
+			mouseDownEventHandler,
+			mouseUpEventHandler
+		} = this.props;
+		// const { isPressed } = this.state;
 
 		return (
 			<button
 				className={
 					(isSmall ? "btn-small " : "btn-big ") +
 					className +
-					(this.state.isPressed ? " pressed" : "")
+					(isPressed ? " pressed" : "")
 				}
 				name={name}
 				// onMouseDown={this.mouseDownEventHandler}
 				// onMouseUp={this.mouseUpEventHandler}
-				onTouchStart={this.mouseDownEventHandler}
-				onTouchEnd={this.mouseUpEventHandler}>
+				onTouchStart={mouseDownEventHandler}
+				onTouchEnd={mouseUpEventHandler}>
 
 				{
 					isSmall

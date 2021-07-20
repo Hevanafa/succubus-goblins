@@ -4,7 +4,7 @@ Succubus & Goblins
 Art
 [V] Create the mobile game design concept
 [V] Create the character design sketch
-[ ] Create the goblin design sketch
+[V] Create the goblin design sketch (credit Wira Wangsawijaya)
 
 Dream Features
 Low effort (probably implemented)
