@@ -253,7 +253,7 @@ export default class App extends React.Component<{}, IState> {
 				});
 				break;
 			case "reset":
-				// Todo: set isOver state
+				// Done: set isOver state
 				if (this.state.isOver)
 					this.startNewGame();
 		}
@@ -344,6 +344,9 @@ export default class App extends React.Component<{}, IState> {
 
 				<div className="screen">
 					<div className="left-panel">
+						{
+							// Todo: do the lore
+						}
 						{this.guideFragment()}
 						{this.mapFragment()}
 						{this.guideFragment()}
