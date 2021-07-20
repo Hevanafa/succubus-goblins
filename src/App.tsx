@@ -7,6 +7,8 @@ import { aboutAppFragment, bestScoreFragment, guideFragment, heroFragment, lives
 import { attemptHit, checkGameOver, commitHit, missHit } from "./modules/combatMethods";
 
 import "./App.scss";
+import BigButton from "./components/BigButton";
+import SmallButton from "./components/SmallButton";
 
 interface IState {
 	initialised: boolean;
@@ -27,6 +29,8 @@ interface IState {
 	deadBodyAry: boolean[]; // length: 2
 	floorBlood: boolean[]; // length: 3
 	lastHitPos: number;
+
+	controllerButtons: boolean[]; // length: 3
 }
 
 const isDev = () => window.location.href.includes("localhost");
@@ -36,7 +40,7 @@ export default class App extends React.Component<{}, IState> {
 	readonly restartMessage = "You ran out of lives!  Press R to restart.";
 	readonly terrainCols = 3;
 	readonly keyGuide = "123"; // "123" | "DFJK" | "SDF JKL";
-	
+
 	readonly racistMode: number = 0;
 
 	protected loadedSoundFiles: Map<string, HTMLAudioElement> | null = null;
@@ -62,7 +66,9 @@ export default class App extends React.Component<{}, IState> {
 			soilAry: this.newSoilMap(),
 			deadBodyAry: [],
 			floorBlood: [],
-			lastHitPos: 0
+			lastHitPos: 0,
+
+			controllerButtons: [false, false, false]
 		};
 
 		this.loadSoundFiles();
@@ -167,6 +173,8 @@ export default class App extends React.Component<{}, IState> {
 	scoreFragment = scoreFragment;
 	symbolListFragment = symbolListFragment;
 
+	noop() { }
+
 	render() {
 		const {
 			initialised,
@@ -178,7 +186,70 @@ export default class App extends React.Component<{}, IState> {
 
 		return (
 			<div className={`App${isDev() ? " dev" : ""}`}>
-				{this.livesFragment()}
+				<img
+					className="placeholder"
+					src="/assets/img/bg_placeholder.png"
+					alt="placeholder" />
+
+				<div className="big-buttons">
+					{/* Todo: make this interactive */}
+					<BigButton
+						className="btn-1"
+						clickEvent={this.noop.bind(this)}
+					/>
+					<BigButton
+						className="btn-2"
+						clickEvent={this.noop.bind(this)}
+					/>
+					<BigButton
+						className="btn-3"
+						clickEvent={this.noop.bind(this)}
+					/>
+
+					{/* <img
+						className="btn-1"
+						src="/assets/img/btn_big.png"
+						alt="1" />
+					<img
+						className="btn-2"
+						src="/assets/img/btn_big.png"
+						alt="2" />
+					<img
+						className="btn-3"
+						src="/assets/img/btn_big.png"
+						alt="3" /> */}
+				</div>
+
+				<div className="small-buttons">
+					{
+						["lore", "sounds", "reset"].map(item =>
+							<SmallButton
+								className=""
+								clickEvent={this.noop.bind(this)}
+							/>
+						)
+					}
+					{/* <img
+						src="/assets/img/btn_small.png"
+						alt="lore" />
+					<img
+						src="/assets/img/btn_small.png"
+						alt="sounds" />
+					<img
+						src="/assets/img/btn_small.png"
+						alt="reset" /> */}
+				</div>
+
+				<div className="screen">
+
+				</div>
+
+			</div>
+		);
+
+		/**
+		 * Original return:
+		 * 		{this.livesFragment()}
 				{this.scoreFragment()}
 				{this.guideFragment()}
 				{this.mapFragment()}
@@ -195,7 +266,7 @@ export default class App extends React.Component<{}, IState> {
 
 				{this.symbolListFragment()}
 				{this.aboutAppFragment()}
-			</div>
-		);
+
+		 */
 	}
 }
